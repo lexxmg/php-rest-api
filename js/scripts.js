@@ -1,16 +1,22 @@
 
 'use strict';
 
-const data = {
-  name: 'test',
-  id: 1
-}
+const data = [
+  {
+    name: 'test',
+    id: 1
+  },
+  {
+    name: 'test-2',
+    id: 2
+  }
+];
 
 fetch('http://php-rest.api', {
     method: 'POST', // или 'PUT'
     body: JSON.stringify(data), // данные могут быть 'строкой' или {объектом}!
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json; charset=utf-8'
     }
   })
   .then(res => res.text())
