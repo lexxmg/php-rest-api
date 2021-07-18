@@ -10,14 +10,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
         echo json_encode($usersExample, JSON_UNESCAPED_UNICODE);
         break;
     case 'POST':
-        echo 'Метод POST: пришли данные ';
-        echo file_get_contents('php://input');
-
-        $arr = json_decode(file_get_contents('php://input'), true);
-        var_dump($arr);
+        //echo 'Метод POST: пришли данные ';
+        echo json_encode($_POST, JSON_UNESCAPED_UNICODE);
         break;
     case 'PUT':
         echo 'Метод PUT';
+        echo file_get_contents('php://input');
+        //$arr = json_decode(file_get_contents('php://input'), true);
         break;
     case 'DELETE':
         echo 'Метод DELETE';
