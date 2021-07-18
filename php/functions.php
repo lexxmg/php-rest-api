@@ -8,6 +8,8 @@ function getUsers($data = [])
 
 function getUser($data = [], $id = 0)
 {
+    $id = (int) $id;
+
     foreach ($data as $key => $value) {
         if ($value['id'] === $id) {
             $user = $value;
@@ -38,8 +40,10 @@ function addUser($data = [], $body = [])
         }
     }
 
+    $maxId = $maxId + 1;
+
     $data[] = [
-        'id' => $maxId + 1,
+        'id' => $maxId,
         'name' => $body['name']
     ];
 
@@ -48,8 +52,10 @@ function addUser($data = [], $body = [])
     file_put_contents($file, json_encode($data, JSON_UNESCAPED_UNICODE));
 
     foreach (getFileData() as $key => $value) {
-        if ( $value['id'] ===  $maxId + 1) {
+        if ( $value['id'] ===  $maxId) {
             http_response_code(201);
+
+            $user = $value;
 
             $success = [
                 'status' => true,
@@ -57,16 +63,18 @@ function addUser($data = [], $body = [])
             ];
 
             echo json_encode($success);
-        } else {
-            http_response_code(202);
-
-            $err = [
-                'status' => false,
-                'message' => 'failed to write data'
-            ];
-
-            echo json_encode($err);
         }
+    }
+
+    if ( !isset($user) ) {
+        http_response_code(202);
+
+        $err = [
+            'status' => false,
+            'message' => 'failed to write data'
+        ];
+
+        echo json_encode($err);
     }
 }
 
