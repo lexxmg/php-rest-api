@@ -16,10 +16,16 @@ const formData = new FormData();
 
 formData.append('name', 'test-formData');
 
-fetch('http://php-rest.api', {
+fetch('http://php-rest.api?type=user', {
   method: 'POST',
   body: formData
-}).then(res => res.json()).then(data => console.log(data));
+})
+  .then(res => res.json())
+  .then(data => {
+    fetch(`http://php-rest.api?type=user&id=${data.user_id}`)
+      .then(res => res.json())
+      .then(data => console.log(data));
+  });
 
 // fetch('http://php-rest.api', {
 //     method: 'POST', // или 'PUT'
@@ -31,6 +37,10 @@ fetch('http://php-rest.api', {
 //   .then(res => res.text())
 //   .then(data => console.log(data));
 
-fetch('http://php-rest.api')
+fetch('http://php-rest.api?type=users')
+  .then(res => res.json())
+  .then(data => console.log(data));
+
+fetch('http://php-rest.api?type=user&id=3')
   .then(res => res.json())
   .then(data => console.log(data));

@@ -4,26 +4,56 @@
 header('Content-type: application/json; charset=utf-8');
 
 require ($_SERVER['DOCUMENT_ROOT'] . '/php/content.php');
+require ($_SERVER['DOCUMENT_ROOT'] . '/php/functions.php');
+
+$type = $_GET['type'] ?? '';
+$id = $_GET['id'] ?? '';
+
+// var_dump($_GET);
+// var_dump($_SERVER);
 
 switch ($_SERVER['REQUEST_METHOD']) {
-    case 'GET':
-        echo json_encode($usersExample, JSON_UNESCAPED_UNICODE);
+    case 'GET': {
+        switch ($type) {
+            case 'user':
+                getUser($usersExample, $id);
+                break;
+            case 'users':
+                getUsers($usersExample);
+                break;
+        }
         break;
-    case 'POST':
-        //echo 'Метод POST: пришли данные ';
-        echo json_encode($_POST, JSON_UNESCAPED_UNICODE);
+    }
+    case 'POST': {
+        switch ($type) {
+            case 'user':
+                addUser($usersExample, $_POST);
+                //echo json_encode($_POST, JSON_UNESCAPED_UNICODE);
+                break;
+        }
         break;
-    case 'PUT':
+    }
+    case 'PUT': {
         echo 'Метод PUT';
         echo file_get_contents('php://input');
         //$arr = json_decode(file_get_contents('php://input'), true);
         break;
-    case 'DELETE':
+    }
+    case 'DELETE': {
         echo 'Метод DELETE';
         break;
-    default:
-        echo 'Не тзвестный метод';
+    }
+    default: {
+        http_response_code(404);
+
+        $err = [
+            'status' => false,
+            'message' => 'bad request'
+        ];
+
+        echo json_encode($err);
         break;
+    }
 }
 
 //var_dump($_SERVER);
