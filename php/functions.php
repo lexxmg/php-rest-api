@@ -43,12 +43,36 @@ function addUser($data = [], $body = [])
         'name' => $body['name']
     ];
 
-    http_response_code(201);
+    $file = $_SERVER['DOCUMENT_ROOT'] . '/data/data.txt';
 
-    $success = [
-        'status' => true,
-        'user_id' => $maxId + 1
-    ];
+    file_put_contents($file, json_encode($data, JSON_UNESCAPED_UNICODE));
 
-    echo json_encode($success);
+    foreach (getFileData() as $key => $value) {
+        if ( $value['id'] ===  $maxId + 1) {
+            http_response_code(201);
+
+            $success = [
+                'status' => true,
+                'user_id' => $value['id']
+            ];
+
+            echo json_encode($success);
+        } else {
+            http_response_code(202);
+
+            $err = [
+                'status' => false,
+                'message' => 'failed to write data'
+            ];
+
+            echo json_encode($err);
+        }
+    }
+}
+
+function getFileData()
+{
+    $file = $_SERVER['DOCUMENT_ROOT'] . '/data/data.txt';
+
+    return json_decode(file_get_contents($file), true);
 }

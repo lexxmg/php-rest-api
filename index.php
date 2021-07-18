@@ -9,6 +9,8 @@ require ($_SERVER['DOCUMENT_ROOT'] . '/php/functions.php');
 $type = $_GET['type'] ?? '';
 $id = $_GET['id'] ?? '';
 
+$data = getFileData();
+
 // var_dump($_GET);
 // var_dump($_SERVER);
 
@@ -16,10 +18,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET': {
         switch ($type) {
             case 'user':
-                getUser($usersExample, $id);
+                getUser($data, $id);
                 break;
             case 'users':
-                getUsers($usersExample);
+                getUsers($data);
                 break;
         }
         break;
@@ -27,7 +29,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST': {
         switch ($type) {
             case 'user':
-                addUser($usersExample, $_POST);
+                addUser($data, $_POST);
                 //echo json_encode($_POST, JSON_UNESCAPED_UNICODE);
                 break;
         }
