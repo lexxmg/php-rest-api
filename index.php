@@ -11,7 +11,7 @@ $id = $_GET['id'] ?? '';
 
 $data = getFileData();
 
-// var_dump($_GET);
+ //var_dump($_POST);
 // var_dump($_SERVER);
 
 switch ($_SERVER['REQUEST_METHOD']) {
@@ -42,7 +42,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
     }
     case 'DELETE': {
-        echo 'Метод DELETE';
+        switch ($type) {
+            case 'user':
+                deleteUser($data, $id);
+                //echo json_encode($_POST, JSON_UNESCAPED_UNICODE);
+                break;
+        }
         break;
     }
     default: {

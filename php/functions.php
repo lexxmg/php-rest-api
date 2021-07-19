@@ -44,7 +44,8 @@ function addUser($data = [], $body = [])
 
     $data[] = [
         'id' => $maxId,
-        'name' => $body['name']
+        'name' => $body['name'],
+        'data' => $body['data']
     ];
 
     $file = $_SERVER['DOCUMENT_ROOT'] . '/data/data.txt';
@@ -78,9 +79,66 @@ function addUser($data = [], $body = [])
     }
 }
 
+function deleteUser($data = [], $id = 0)
+{
+    $file = $_SERVER['DOCUMENT_ROOT'] . '/data/data.txt';
+    $id = (int) $id;
+    $stat = false;
+
+    foreach ($data as $key => $value) {
+        if ( $id === $value['id'] ) {
+            unset($data[$key]);
+            $data = array_values($data);
+            file_put_contents($file, json_encode($data, JSON_UNESCAPED_UNICODE));
+            $stat = true;
+        }
+    }
+
+    if ($stat) {
+        foreach (getFileData() as $key => $value) {
+            if ( $value['id'] ===  $id) {
+                http_response_code(202);
+
+                $user = $value;
+
+                $err = [
+                    'status' => false,
+                    'message' => 'failed to delete'
+                ];
+
+                echo json_encode($err);
+            }
+        }
+
+        if ( !isset($user) ) {
+            http_response_code(200);
+
+            $success = [
+                'status' => true,
+                'message' => 'successful deletion'
+            ];
+
+            echo json_encode($success);
+        }
+    } else {
+        http_response_code(204);
+
+        $err = [
+            'status' => false,
+            'message' => 'User not found'
+        ];
+
+        echo json_encode($err);
+    }
+}
+
 function getFileData()
 {
     $file = $_SERVER['DOCUMENT_ROOT'] . '/data/data.txt';
 
-    return json_decode(file_get_contents($file), true);
+    if ( file_exists($file) ) {
+        return json_decode(file_get_contents($file), true);
+    } else {
+        return [];
+    }
 }
