@@ -29,16 +29,23 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST': {
         switch ($type) {
             case 'user':
-                addUser($data, $_POST);
+                if ($_POST) {
+                    addUser($data, $_POST);
+                } else {
+                    $getDataArr = json_decode(file_get_contents('php://input'), true);
+                    addUser($data, $getDataArr);
+                }
                 //echo json_encode($_POST, JSON_UNESCAPED_UNICODE);
                 break;
         }
         break;
     }
     case 'PUT': {
-        echo 'Метод PUT';
-        echo file_get_contents('php://input');
-        //$arr = json_decode(file_get_contents('php://input'), true);
+        switch ($type) {
+            case 'user':
+                editUser($data, $id);
+                break;
+        }
         break;
     }
     case 'DELETE': {

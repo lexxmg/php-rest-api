@@ -79,8 +79,66 @@ function addUser($data = [], $body = [])
     }
 }
 
+function editUser($data = [], $id = 0)
+{
+    if ( !checkIsUser($data, $id) ) {
+        return;
+    }
+
+    $file = $_SERVER['DOCUMENT_ROOT'] . '/data/data.txt';
+    $id = (int) $id;
+    $getDataArr = json_decode(file_get_contents('php://input'), true);
+    $stat = false;
+    $examination = false;
+
+    foreach ($data as $key => $value) {
+        if ( $id === $value['id'] ) {
+            $data[$key]['name'] = $getDataArr['name'];
+            $data[$key]['data'] = $getDataArr['data'];
+            //$data = array_values($data);
+
+            file_put_contents($file, json_encode($data, JSON_UNESCAPED_UNICODE));
+            $stat = true;
+        }
+    }
+
+    if ($stat) {
+        foreach (getFileData() as $key => $value) {
+            if ($value['name'] === $getDataArr['name'] && $value['data'] === $getDataArr['data']) {
+                http_response_code(201);
+
+                $success = [
+                    'status' => true,
+                    'message' => 'successfully changed'
+                ];
+
+                echo json_encode($success);
+
+                $examination = true;
+            }
+        }
+
+        if (!$examination) {
+            http_response_code(202);
+
+            $user = $value;
+
+            $err = [
+                'status' => false,
+                'message' => 'failed to change'
+            ];
+
+            echo json_encode($err);
+        }
+    }
+}
+
 function deleteUser($data = [], $id = 0)
 {
+    if ( !checkIsUser($data, $id) ) {
+        return;
+    }
+
     $file = $_SERVER['DOCUMENT_ROOT'] . '/data/data.txt';
     $id = (int) $id;
     $stat = false;
@@ -140,5 +198,31 @@ function getFileData()
         return json_decode(file_get_contents($file), true);
     } else {
         return [];
+    }
+}
+
+function checkIsUser($data = [], $id = 0)
+{
+    $id = (int) $id;
+
+    foreach ($data as $key => $value) {
+        if ($value['id'] === $id) {
+            $user = $value;
+        }
+    }
+
+    if (isset($user)) {
+        //echo json_encode($user, JSON_UNESCAPED_UNICODE);
+        return true;
+    } else {
+        http_response_code(404);
+
+        $err = [
+            'status' => false,
+            'message' => 'User not found'
+        ];
+
+        echo json_encode($err);
+        return false;
     }
 }
